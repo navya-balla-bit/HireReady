@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HireReady | Career Preparation</title>
+<style>
+:root{--bg:#0b1020;--panel:#141c30;--panel2:#1b2640;--text:#edf1ff;--muted:#a0abc6;--purple:#9275ff;--cyan:#56d9d0;--border:#2b3652;--green:#52d6a0}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:Segoe UI,Arial,sans-serif}
+button,input,select{font:inherit}
+button{cursor:pointer}
+.app{min-height:100vh}
+.sidebar{position:fixed;left:0;top:0;bottom:0;width:235px;background:#0e1527;border-right:1px solid var(--border);padding:22px 15px;display:flex;flex-direction:column;z-index:5}
+.brand{display:flex;gap:11px;align-items:center;padding:5px 8px 25px}
+.logo{width:42px;height:42px;border-radius:13px;background:linear-gradient(135deg,#a28aff,#6266ee);display:grid;place-items:center;font-size:23px;font-weight:bold}
+.brand h2{margin:0;font-size:20px}.brand small{color:var(--muted)}
+.nav-label{font-size:10px;letter-spacing:2px;color:#8190b0;padding:12px}
+.nav-btn{width:100%;padding:13px 12px;border:0;border-radius:10px;background:transparent;color:var(--muted);text-align:left;margin:3px 0}
+.nav-btn:hover,.nav-btn.active{background:#282344;color:white}
+.nav-btn.active{box-shadow:inset 3px 0 var(--purple)}
+.sidebar-bottom{margin-top:auto;background:var(--panel);padding:15px;border-radius:13px;font-size:12px;color:var(--muted);line-height:1.7}
+.main{margin-left:235px;padding:28px;max-width:1600px}
+.topbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:25px;gap:12px}
+h1{font-size:29px;margin:7px 0}h2{font-size:19px;margin:0 0 10px}h3{font-size:15px;margin:0 0 7px}
+p{line-height:1.6}.muted{color:var(--muted)}.small{font-size:12px}
+.eyebrow{font-size:11px;letter-spacing:2px;color:var(--purple);font-weight:bold}
+.avatar{width:43px;height:43px;border-radius:50%;display:grid;place-items:center;background:#302957;font-weight:bold}
+.section{display:none}.section.active{display:block}
+.grid{display:grid;gap:16px}.stats{grid-template-columns:repeat(4,minmax(0,1fr));margin:20px 0}
+.two-col{grid-template-columns:1.1fr .9fr}
+.card{background:var(--panel);border:1px solid var(--border);border-radius:16px;padding:20px;min-width:0}
+.stat-value{font-size:29px;font-weight:bold;margin:13px 0 4px}
+.row{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.tag{display:inline-block;background:#302747;color:#d9ceff;padding:5px 9px;border-radius:20px;font-size:11px}
+.tag.green{background:#143e35;color:#9af0ce}
+.hero{padding:26px;border-radius:18px;background:linear-gradient(115deg,#292047,#17364a);border:1px solid #3b3a63;display:flex;align-items:center;justify-content:space-between;gap:15px}
+.hero h2{font-size:25px}.hero p{max-width:540px;color:#c5cbe1}
+.btn{padding:11px 15px;border:0;border-radius:9px;background:var(--purple);color:white;font-weight:bold}
+.btn.secondary{background:#252f49;color:var(--text);border:1px solid var(--border)}
+.btn.green{background:#165044}.btn:disabled{opacity:.45;cursor:not-allowed}
+.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+.progress{height:7px;background:#2a354e;border-radius:9px;overflow:hidden;margin:10px 0 18px}
+.progress span{display:block;height:100%;background:linear-gradient(90deg,var(--purple),var(--cyan))}
+.quick-grid{grid-template-columns:repeat(3,minmax(0,1fr));margin-top:15px}
+.quick{cursor:pointer}.quick:hover{border-color:var(--purple)}
+.quick-icon{font-size:25px;margin-bottom:12px}
+.field{margin:13px 0}.field label{display:block;font-size:12px;color:var(--muted);margin-bottom:6px}
+input,select{width:100%;background:#0e1629;border:1px solid var(--border);border-radius:9px;padding:11px;color:var(--text)}
+.item{padding:14px;background:#10182b;border:1px solid var(--border);border-radius:11px;margin-top:10px;overflow-wrap:anywhere}
+.item-meta{font-size:12px;color:var(--muted);margin-top:6px}
+.list{margin-top:13px}
+.quiz-option{display:block;width:100%;text-align:left;padding:14px;margin:9px 0;background:#10182b;color:var(--text);border:1px solid var(--border);border-radius:10px}
+.quiz-option:hover:not(:disabled){border-color:var(--purple)}
+.quiz-option.correct{border-color:var(--green);background:#15372f}
+.quiz-option.wrong{border-color:#ff8097;background:#3b202e}
+.empty{text-align:center;color:var(--muted);padding:22px;font-size:13px}
+.footer{text-align:center;color:#7180a1;font-size:11px;margin:30px 0}
+.menu-btn{display:none}
+@media(max-width:1000px){.stats{grid-template-columns:repeat(2,1fr)}.two-col{grid-template-columns:1fr}}
+@media(max-width:700px){.sidebar{display:none;width:235px;box-shadow:10px 0 40px #0008}.sidebar.open{display:flex}.main{margin:0;padding:18px 13px}.menu-btn{display:inline-block}.quick-grid{grid-template-columns:1fr}.hero{align-items:flex-start;flex-direction:column}h1{font-size:24px}}
+</style>
+</head>
+<body>
+<aside class="sidebar" id="sidebar">
+  <div class="brand"><div class="logo">H</div><div><h2>HireReady</h2><small>Career workspace</small></div></div>
+  <div class="nav-label">WORKSPACE</div>
+  <button class="nav-btn active" data-page="dashboard">◈ Dashboard</button>
+  <button class="nav-btn" data-page="aptitude">◎ Aptitude Lab</button>
+  <button class="nav-btn" data-page="coding">⌘ Coding Tracker</button>
+  <button class="nav-btn" data-page="planner">▦ Study Planner</button>
+  <button class="nav-btn" data-page="jobs">▤ Job Applications</button>
+  <div class="sidebar-bottom"><span class="tag">YOUR CAREER JOURNEY</span><h3 style="margin-top:13px">Small steps. Big growth.</h3>Practice regularly, track progress and prepare for opportunities.</div>
+</aside>
+
+<main class="main">
+<header class="topbar">
+  <div><button class="btn secondary menu-btn" id="menuBtn">☰ Menu</button><div class="eyebrow" style="margin-top:8px">YOUR PERSONAL CAREER HUB</div><h1 id="pageTitle">Dashboard</h1><div class="muted small" id="todayText"></div></div>
+  <div class="avatar">HR</div>
+</header>
+
+<section class="section active" id="dashboard">
+  <div class="hero"><div><span class="tag">WELCOME TO HIREREADY</span><h2>Build your skills. Track your growth.</h2><p>Your workspace for aptitude practice, coding progress, study planning and job applications.</p><button class="btn" data-go="aptitude">Start Practicing →</button></div><div style="font-size:65px">🚀</div></div>
+  <div class="grid stats">
+    <div class="card"><div class="muted small">Quiz Attempts</div><div class="stat-value" id="statAttempts">0</div><div class="muted small">Completed sessions</div></div>
+    <div class="card"><div class="muted small">Problems Solved</div><div class="stat-value" id="statSolved">0</div><div class="muted small">Coding records</div></div>
+    <div class="card"><div class="muted small">Study Tasks Done</div><div class="stat-value" id="statTasks">0</div><div class="muted small">Completed tasks</div></div>
+    <div class="card"><div class="muted small">Applications</div><div class="stat-value" id="statJobs">0</div><div class="muted small">Jobs tracked</div></div>
+  </div>
+  <div class="grid two-col">
+    <div class="card"><h2>Learning Overview</h2><div class="row"><span class="small">Aptitude accuracy</span><strong id="accuracyText">0%</strong></div><div class="progress"><span id="accuracyBar" style="width:0%"></span></div><div class="row"><span class="small">Coding problems</span><strong id="codingText">0</strong></div><div class="progress"><span id="codingBar" style="width:0%"></span></div><div class="row"><span class="small">Study completion</span><strong id="taskText">0%</strong></div><div class="progress"><span id="taskBar" style="width:0%"></span></div></div>
+    <div class="card"><h2>Today's Focus</h2><div class="item"><strong>🧠 Practice aptitude</strong><div class="item-meta">Build speed and accuracy.</div></div><div class="item"><strong>💻 Solve a coding problem</strong><div class="item-meta">Learn by writing code.</div></div><div class="item"><strong>📅 Plan study time</strong><div class="item-meta">Choose your next task.</div></div></div>
+  </div>
+  <h2 style="margin-top:25px">Quick Access</h2>
+  <div class="grid quick-grid"><div class="card quick" data-go="aptitude"><div class="quick-icon">🧠</div><h3>Aptitude Lab</h3><p class="muted small">Random quiz questions.</p></div><div class="card quick" data-go="coding"><div class="quick-icon">💻</div><h3>Coding Tracker</h3><p class="muted small">Record solved problems.</p></div><div class="card quick" data-go="planner"><div class="quick-icon">📅</div><h3>Study Planner</h3><p class="muted small">Organize your learning.</p></div></div>
+</section>
+
+<section class="section" id="aptitude">
+  <div class="grid two-col">
+    <div class="card">
+      <div class="row"><h2>Aptitude Practice</h2><span class="tag">40 QUESTIONS</span></div>
+      <p class="muted small">Each round contains five questions selected from the full question bank. Used questions are saved so the next round can use different ones.</p>
+      <div class="row"><span class="muted small" id="quizCount">Ready to start</span><strong id="quizScore">Score: 0</strong></div>
+      <div class="progress"><span id="quizBar" style="width:0%"></span></div>
+      <h3 id="quizQuestion">Ready to test your skills?</h3>
+      <div id="quizOptions"></div>
+      <p class="muted small" id="quizFeedback" aria-live="polite">Press Start Quiz to begin.</p>
+      <div class="actions"><button class="btn" id="startQuiz">Start Quiz</button><button class="btn secondary" id="nextQuiz" disabled>Next Question →</button></div>
+      <p class="muted small" id="bankStatus"></p>
+    </div>
+    <div class="card"><h2>Quiz History</h2><p class="muted small">Completed attempts on this browser.</p><div id="quizHistory" class="list"></div></div>
+  </div>
+</section>
+
+<section class="section" id="coding">
+  <div class="grid two-col">
+    <div class="card"><h2>Add Coding Progress</h2><form id="codingForm"><div class="field"><label>Problem name</label><input id="problemName" required placeholder="e.g. Two Sum"></div><div class="field"><label>Language</label><select id="problemLanguage"><option>Java</option><option>Python</option><option>C</option><option>JavaScript</option><option>C++</option></select></div><div class="field"><label>Difficulty</label><select id="problemDifficulty"><option>Easy</option><option>Medium</option><option>Hard</option></select></div><div class="field"><label>Notes</label><input id="problemNotes" placeholder="Topic or platform"></div><button class="btn" type="submit">+ Add Problem</button></form></div>
+    <div class="card"><h2>Coding Summary</h2><div class="stat-value" id="codingTotal">0</div><div class="muted small">Problems recorded</div><div class="stat-value" id="languageTotal">0</div><div class="muted small">Languages used</div></div>
+  </div>
+  <div class="card" style="margin-top:17px"><div class="row"><h2>Problem Log</h2><button class="btn secondary" id="clearCoding">Clear All</button></div><div id="codingList"></div></div>
+</section>
+
+<section class="section" id="planner">
+  <div class="grid two-col">
+    <div class="card"><h2>Create Study Task</h2><form id="taskForm"><div class="field"><label>Task name</label><input id="taskName" required placeholder="e.g. Practice LCM and HCF"></div><div class="field"><label>Subject</label><select id="taskSubject"><option>Aptitude</option><option>Java</option><option>Python</option><option>College Study</option><option>Projects</option><option>Placement</option><option>Other</option></select></div><div class="field"><label>Due date</label><input id="taskDate" type="date" required></div><button class="btn" type="submit">+ Add Task</button></form></div>
+    <div class="card"><h2>Study Smart</h2><div class="item"><strong>1. Learn</strong><div class="item-meta">Understand one concept.</div></div><div class="item"><strong>2. Practice</strong><div class="item-meta">Solve related questions.</div></div><div class="item"><strong>3. Review</strong><div class="item-meta">Check mistakes and revise.</div></div></div>
+  </div>
+  <div class="card" style="margin-top:17px"><div class="row"><h2>Your Study Plan</h2><span class="tag" id="taskSummary">0 tasks</span></div><div id="taskList"></div></div>
+</section>
+
+<section class="section" id="jobs">
+  <div class="grid two-col">
+    <div class="card"><h2>Track an Opportunity</h2><form id="jobForm"><div class="field"><label>Company</label><input id="companyName" required placeholder="Company name"></div><div class="field"><label>Role</label><input id="jobRole" required placeholder="e.g. Software Intern"></div><div class="field"><label>Status</label><select id="jobStatus"><option>Interested</option><option>Applied</option><option>Assessment</option><option>Interview</option><option>Offer</option><option>Rejected</option></select></div><div class="field"><label>Application date</label><input id="jobDate" type="date" required></div><div class="field"><label>Link or notes</label><input id="jobNotes" placeholder="Optional"></div><button class="btn" type="submit">+ Save Opportunity</button></form></div>
+    <div class="card"><h2>Application Advice</h2><div class="item"><strong>Keep your resume ready</strong><div class="item-meta">Mention accurate skills and real project work.</div></div><div class="item"><strong>Prepare for each round</strong><div class="item-meta">Practice aptitude, coding and communication.</div></div><div class="item"><strong>Track deadlines</strong><div class="item-meta">Keep your applications organized.</div></div></div>
+  </div>
+  <div class="card" style="margin-top:17px"><div class="row"><h2>Application Tracker</h2><span class="tag" id="jobSummary">0 applications</span></div><div id="jobList"></div></div>
+</section>
+<div class="footer">HIRE READY • YOUR PERSONAL CAREER WORKSPACE • HTML, CSS & JAVASCRIPT</div>
+</main>
+
+<script>
+const $ = id => document.getElementById(id);
+const STORAGE_KEY = "hireready_portfolio_v2";
+
+function emptyData(){return {coding:[],tasks:[],jobs:[],history:[],usedQuestionIds:[]};}
+function loadData(){
+  try{
+    const saved=JSON.parse(localStorage.getItem(STORAGE_KEY));
+    return {...emptyData(),...(saved||{})};
+  }catch(error){return emptyData();}
+}
+let data=loadData();
+if(!Array.isArray(data.usedQuestionIds)) data.usedQuestionIds=[];
+function saveData(){
+  localStorage.setItem(STORAGE_KEY,JSON.stringify(data));
+  renderAll();
+}
+function safeText(value){
+  return String(value??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+}
+function today(){
+  const d=new Date();
+  return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");
+}
+$("todayText").textContent=new Date().toLocaleDateString(undefined,{weekday:"long",year:"numeric",month:"long",day:"numeric"});
+$("taskDate").value=today();
+$("jobDate").value=today();
+
+function goTo(page){
+  document.querySelectorAll(".section").forEach(s=>s.classList.toggle("active",s.id===page));
+  document.querySelectorAll(".nav-btn").forEach(b=>b.classList.toggle("active",b.dataset.page===page));
+  const titles={dashboard:"Dashboard",aptitude:"Aptitude Lab",coding:"Coding Tracker",planner:"Study Planner",jobs:"Job Applications"};
+  $("pageTitle").textContent=titles[page]||"Dashboard";
+  $("sidebar").classList.remove("open");
+  window.scrollTo({top:0,behavior:"smooth"});
+}
+document.querySelectorAll("[data-page]").forEach(b=>b.addEventListener("click",()=>goTo(b.dataset.page)));
+document.querySelectorAll("[data-go]").forEach(b=>b.addEventListener("click",()=>goTo(b.dataset.go)));
+$("menuBtn").addEventListener("click",()=>$("sidebar").classList.toggle("open"));
+
+/* QUESTION BANK: 40 UNIQUE QUESTIONS */
+const questions=[
+{id:1,q:"What does CPU stand for?",o:["Central Processing Unit","Computer Personal Unit","Central Program Utility","Control Processing User"],a:0},
+{id:2,q:"Which language defines the structure of a web page?",o:["Python","HTML","Java","C"],a:1},
+{id:3,q:"What does HTML stand for?",o:["Hyper Text Markup Language","High Text Machine Language","Hyper Transfer Main Link","Home Tool Markup Language"],a:0},
+{id:4,q:"Which data structure follows LIFO?",o:["Queue","Array","Stack","Tree"],a:2},
+{id:5,q:"Which data structure follows FIFO?",o:["Stack","Queue","Graph","Tree"],a:1},
+{id:6,q:"Which symbol starts a single-line JavaScript comment?",o:["##","//","<!--","**"],a:1},
+{id:7,q:"Which keyword can declare a JavaScript variable?",o:["int","define","let","string"],a:2},
+{id:8,q:"Which language is widely used for machine learning?",o:["Python","HTML","CSS","XML"],a:0},
+{id:9,q:"What does SQL stand for?",o:["Structured Query Language","Simple Question Language","System Quality Logic","Standard Quick Link"],a:0},
+{id:10,q:"Which operator checks strict equality in JavaScript?",o:["=","==","===","!="],a:2},
+{id:11,q:"What is binary search time complexity on a sorted array?",o:["O(n)","O(log n)","O(n²)","O(n log n)"],a:1},
+{id:12,q:"Which of these is a relational database?",o:["MySQL","Photoshop","HTML","Linux"],a:0},
+{id:13,q:"Which CSS property changes text color?",o:["font-style","background","color","text-size"],a:2},
+{id:14,q:"Which HTML tag creates a hyperlink?",o:["<p>","<a>","<h1>","<img>"],a:1},
+{id:15,q:"Which keyword declares a class in Java?",o:["function","class","define","object"],a:1},
+{id:16,q:"What is the result of 5 % 2?",o:["0","1","2","2.5"],a:1},
+{id:17,q:"Which protocol is commonly used for secure websites?",o:["FTP","HTTP","HTTPS","SMTP"],a:2},
+{id:18,q:"Which of these is an operating system?",o:["Windows","Python","MySQL","JavaScript"],a:0},
+{id:19,q:"What does RAM stand for?",o:["Read Access Memory","Random Access Memory","Run Application Module","Rapid Action Machine"],a:1},
+{id:20,q:"Which loop checks its condition before each iteration?",o:["while","do-while","Neither","No loop"],a:0},
+{id:21,q:"What is an algorithm?",o:["A programming language","Step-by-step problem-solving instructions","A computer device","A database table"],a:1},
+{id:22,q:"Which technology is used to style web pages?",o:["CSS","SQL","C","Git"],a:0},
+{id:23,q:"Which Git command copies a repository to your computer?",o:["git push","git clone","git add","git status"],a:1},
+{id:24,q:"Which Git command records a snapshot in repository history?",o:["git commit","git copy","git open","git start"],a:0},
+{id:25,q:"Which is a valid JavaScript array?",o:["let a = (1,2,3)","let a = [1,2,3]","let a = {1;2;3}","let a = <1,2,3>"],a:1},
+{id:26,q:"Which method adds an item to the end of a JavaScript array?",o:["push()","pop()","shift()","join()"],a:0},
+{id:27,q:"What does API stand for?",o:["Application Programming Interface","Advanced Program Internet","Applied Process Integration","Application Page Information"],a:0},
+{id:28,q:"Which of these is a NoSQL database?",o:["MongoDB","HTML","CSS","Git"],a:0},
+{id:29,q:"Which keyword returns a value from a JavaScript function?",o:["send","print","return","break"],a:2},
+{id:30,q:"What is the main purpose of a database?",o:["Store and organize data","Draw images","Design web pages","Compile CSS"],a:0},
+{id:31,q:"Which number is prime?",o:["9","15","17","21"],a:2},
+{id:32,q:"What is 20% of 150?",o:["15","20","30","45"],a:2},
+{id:33,q:"A train travels 60 km in one hour. How far in 3 hours at the same speed?",o:["120 km","150 km","180 km","200 km"],a:2},
+{id:34,q:"Find the next number: 2, 4, 8, 16, ...",o:["18","24","30","32"],a:3},
+{id:35,q:"What is the average of 10, 20 and 30?",o:["15","20","25","30"],a:1},
+{id:36,q:"Which is a valid JavaScript Boolean value?",o:["yes","true","1true","on"],a:1},
+{id:37,q:"Which HTML element displays an image?",o:["<image>","<picture-file>","<img>","<src>"],a:2},
+{id:38,q:"What does OOP stand for?",o:["Object-Oriented Programming","Online Operating Process","Object Output Program","Open Order Protocol"],a:0},
+{id:39,q:"Which tool is commonly used to track source code changes?",o:["Git","Paint","Calculator","Camera"],a:0},
+{id:40,q:"Which HTTP status code usually means Not Found?",o:["200","301","404","500"],a:2}
+];
+
+let quiz={questions:[],index:0,score:0,answered:false,running:false};
+
+/* Choose five questions not used in earlier rounds.
+   Used IDs are saved in localStorage, so refresh will not reset them. */
+function startQuiz(){
+  let used=new Set(data.usedQuestionIds);
+  let available=questions.filter(q=>!used.has(q.id));
+
+  // Begin a new cycle only after fewer than five unused questions remain.
+  if(available.length<5){
+    used.clear();
+    data.usedQuestionIds=[];
+    available=[...questions];
+  }
+
+  // Shuffle the available questions.
+  for(let i=available.length-1;i>0;i--){
+    const j=Math.floor(Math.random()*(i+1));
+    [available[i],available[j]]=[available[j],available[i]];
+  }
+
+  const selected=available.slice(0,5);
+  selected.forEach(q=>used.add(q.id));
+  data.usedQuestionIds=[...used];
+
+  quiz={questions:selected,index:0,score:0,answered:false,running:true};
+  localStorage.setItem(STORAGE_KEY,JSON.stringify(data));
+
+  $("startQuiz").textContent="Restart Quiz";
+  $("nextQuiz").textContent="Next Question →";
+  $("quizOptions").innerHTML="";
+  $("quizFeedback").textContent="";
+  $("bankStatus").textContent=`${questions.length-used.size} unused questions remain in this cycle.`;
+  showQuestion();
+}
+
+function showQuestion(){
+  const q=quiz.questions[quiz.index];
+  quiz.answered=false;
+  $("quizCount").textContent=`Question ${quiz.index+1} of ${quiz.questions.length}`;
+  $("quizScore").textContent=`Score: ${quiz.score}`;
+  $("quizBar").style.width=`${quiz.index/quiz.questions.length*100}%`;
+  $("quizQuestion").textContent=q.q;
+  $("quizFeedback").textContent="Choose your answer.";
+  $("quizOptions").innerHTML="";
+  q.o.forEach((option,index)=>{
+    const button=document.createElement("button");
+    button.className="quiz-option";
+    button.textContent=String.fromCharCode(65+index)+". "+option;
+    button.addEventListener("click",()=>chooseAnswer(index));
+    $("quizOptions").appendChild(button);
+  });
+  $("nextQuiz").disabled=true;
+}
+
+function chooseAnswer(selected){
+  if(!quiz.running||quiz.answered)return;
+  quiz.answered=true;
+  const q=quiz.questions[quiz.index];
+  [...$("quizOptions").querySelectorAll("button")].forEach((button,index)=>{
+    button.disabled=true;
+    if(index===q.a)button.classList.add("correct");
+    if(index===selected&&selected!==q.a)button.classList.add("wrong");
+  });
+  if(selected===q.a){
+    quiz.score++;
+    $("quizFeedback").textContent="Correct! Well done.";
+  }else{
+    $("quizFeedback").textContent="Incorrect. Correct answer: "+q.o[q.a];
+  }
+  $("quizScore").textContent=`Score: ${quiz.score}`;
+  $("quizBar").style.width=`${(quiz.index+1)/quiz.questions.length*100}%`;
+  $("nextQuiz").disabled=false;
+  $("nextQuiz").textContent=quiz.index===quiz.questions.length-1?"Finish Quiz":"Next Question →";
+}
+
+function nextQuestion(){
+  if(!quiz.running||!quiz.answered)return;
+  if(quiz.index<quiz.questions.length-1){
+    quiz.index++;
+    showQuestion();
+    return;
+  }
+  quiz.running=false;
+  data.history.unshift({date:new Date().toLocaleString(),score:quiz.score,total:quiz.questions.length});
+  data.history=data.history.slice(0,30);
+  saveData();
+  $("quizQuestion").textContent=`Round complete! You scored ${quiz.score} out of ${quiz.questions.length}.`;
+  $("quizOptions").innerHTML="";
+  $("quizFeedback").textContent=quiz.score>=4?"Great work! Keep practicing.":"Good effort. Review your answers and try again.";
+  $("quizCount").textContent="Completed";
+  $("quizBar").style.width="100%";
+  $("startQuiz").textContent="Try Again";
+  $("nextQuiz").disabled=true;
+  $("nextQuiz").textContent="Next Question →";
+  $("bankStatus").textContent="Click Try Again for a new set of questions.";
+}
+$("startQuiz").addEventListener("click",startQuiz);
+$("nextQuiz").addEventListener("click",nextQuestion);
+
+/* CODING TRACKER */
+$("codingForm").addEventListener("submit",event=>{
+  event.preventDefault();
+  data.coding.unshift({id:Date.now(),name:$("problemName").value.trim(),language:$("problemLanguage").value,difficulty:$("problemDifficulty").value,notes:$("problemNotes").value.trim(),date:today()});
+  $("codingForm").reset();
+  saveData();
+});
+$("clearCoding").addEventListener("click",()=>{
+  if(data.coding.length&&confirm("Delete all coding records?")){
+    data.coding=[];
+    saveData();
+  }
+});
+
+/* STUDY PLANNER */
+$("taskForm").addEventListener("submit",event=>{
+  event.preventDefault();
+  data.tasks.unshift({id:Date.now(),name:$("taskName").value.trim(),subject:$("taskSubject").value,date:$("taskDate").value,done:false});
+  $("taskForm").reset();
+  $("taskDate").value=today();
+  saveData();
+});
+
+/* JOB APPLICATION TRACKER */
+$("jobForm").addEventListener("submit",event=>{
+  event.preventDefault();
+  data.jobs.unshift({id:Date.now(),company:$("companyName").value.trim(),role:$("jobRole").value.trim(),status:$("jobStatus").value,date:$("jobDate").value,notes:$("jobNotes").value.trim()});
+  $("jobForm").reset();
+  $("jobDate").value=today();
+  saveData();
+});
+
+function deleteRecord(collection,id){
+  if(confirm("Delete this record?")){
+    data[collection]=data[collection].filter(item=>item.id!==id);
+    saveData();
+  }
+}
+function renderCoding(){
+  $("codingTotal").textContent=data.coding.length;
+  $("languageTotal").textContent=new Set(data.coding.map(x=>x.language)).size;
+  $("codingList").innerHTML=data.coding.length?data.coding.map(item=>`
+    <div class="item"><div class="row"><strong>${safeText(item.name)}</strong><span class="tag">${safeText(item.difficulty)}</span></div>
+    <div class="item-meta">${safeText(item.language)} · ${safeText(item.date)} ${item.notes?" · "+safeText(item.notes):""}</div>
+    <div class="actions"><button class="btn secondary delete-coding" data-id="${item.id}">Delete</button></div></div>`).join(""):'<div class="empty">No coding problems yet. Add your first one above.</div>';
+  document.querySelectorAll(".delete-coding").forEach(b=>b.addEventListener("click",()=>deleteRecord("coding",Number(b.dataset.id))));
+}
+function renderTasks(){
+  const done=data.tasks.filter(t=>t.done).length;
+  $("taskSummary").textContent=`${done}/${data.tasks.length} completed`;
+  $("taskList").innerHTML=data.tasks.length?data.tasks.map(t=>`
+    <div class="item"><div class="row"><div><strong style="${t.done?"text-decoration:line-through":""}">${safeText(t.name)}</strong><div class="item-meta">${safeText(t.subject)} · Due ${safeText(t.date)}</div></div><span class="tag ${t.done?"green":""}">${t.done?"Done":t.date<today()?"Overdue":"Pending"}</span></div>
+    <div class="actions"><button class="btn ${t.done?"secondary":"green"} toggle-task" data-id="${t.id}">${t.done?"Undo":"Mark Complete"}</button><button class="btn secondary delete-task" data-id="${t.id}">Delete</button></div></div>`).join(""):'<div class="empty">Your study plan is empty. Add a task above.</div>';
+  document.querySelectorAll(".toggle-task").forEach(b=>b.addEventListener("click",()=>{const t=data.tasks.find(x=>x.id===Number(b.dataset.id));if(t)t.done=!t.done;saveData();}));
+  document.querySelectorAll(".delete-task").forEach(b=>b.addEventListener("click",()=>deleteRecord("tasks",Number(b.dataset.id))));
+}
+function renderJobs(){
+  $("jobSummary").textContent=`${data.jobs.length} applications`;
+  $("jobList").innerHTML=data.jobs.length?data.jobs.map(j=>`
+    <div class="item"><div class="row"><div><strong>${safeText(j.company)}</strong><div class="item-meta">${safeText(j.role)} · ${safeText(j.date)}</div></div><span class="tag ${j.status==="Offer"?"green":""}">${safeText(j.status)}</span></div>
+    ${j.notes?`<div class="item-meta">${safeText(j.notes)}</div>`:""}
+    <div class="actions"><button class="btn secondary change-job" data-id="${j.id}">Update Status</button><button class="btn secondary delete-job" data-id="${j.id}">Delete</button></div></div>`).join(""):'<div class="empty">No opportunities yet. Add a job or internship above.</div>';
+  document.querySelectorAll(".change-job").forEach(b=>b.addEventListener("click",()=>{
+    const j=data.jobs.find(x=>x.id===Number(b.dataset.id));if(!j)return;
+    const statuses=["Interested","Applied","Assessment","Interview","Offer","Rejected"];
+    j.status=statuses[(statuses.indexOf(j.status)+1)%statuses.length];saveData();
+  }));
+  document.querySelectorAll(".delete-job").forEach(b=>b.addEventListener("click",()=>deleteRecord("jobs",Number(b.dataset.id))));
+}
+function renderHistory(){
+  $("quizHistory").innerHTML=data.history.length?data.history.slice(0,10).map(h=>`
+    <div class="item"><div class="row"><strong>${h.score}/${h.total}</strong><span class="tag">${Math.round(h.score/h.total*100)}%</span></div><div class="item-meta">${safeText(h.date)}</div></div>`).join(""):'<div class="empty">Completed quiz attempts will appear here.</div>';
+}
+function renderDashboard(){
+  const attempts=data.history.length;
+  const solved=data.coding.length;
+  const completed=data.tasks.filter(t=>t.done).length;
+  const totalTasks=data.tasks.length;
+  const correct=data.history.reduce((s,h)=>s+h.score,0);
+  const total=data.history.reduce((s,h)=>s+h.total,0);
+  const accuracy=total?Math.round(correct/total*100):0;
+  const taskPercent=totalTasks?Math.round(completed/totalTasks*100):0;
+  $("statAttempts").textContent=attempts;
+  $("statSolved").textContent=solved;
+  $("statTasks").textContent=`${completed}/${totalTasks}`;
+  $("statJobs").textContent=data.jobs.length;
+  $("accuracyText").textContent=accuracy+"%";
+  $("accuracyBar").style.width=accuracy+"%";
+  $("codingText").textContent=solved+" solved";
+  $("codingBar").style.width=Math.min(100,solved*10)+"%";
+  $("taskText").textContent=taskPercent+"%";
+  $("taskBar").style.width=taskPercent+"%";
+}
+function renderAll(){
+  renderDashboard();
+  renderCoding();
+  renderTasks();
+  renderJobs();
+  renderHistory();
+}
+renderAll();
+$("bankStatus").textContent=`${questions.length-data.usedQuestionIds.length} unused questions remain in this cycle.`;
+</script>
+</body>
+</html>
